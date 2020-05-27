@@ -1,0 +1,27 @@
+
+FROM golang:1.14-alpine as build-env
+
+RUN apk add --no-cache git
+
+ARG GOPROXY=https://proxy.golang.org,direct
+ARG VERSION=v0.0.1
+
+WORKDIR /go/src
+RUN git clone https://github.com/knative/serving.git knative.dev/serving; 
+
+WORKDIR /go/src/knative.dev/serving/cmd/queue
+
+RUN set -eux; \
+    \
+	git checkout ${VERSION}; \
+    go build -o queue-proxy; \
+    \
+    mkdir -p /app; \
+    mkdir -p ./kodata; \
+    cp -R ./kodata /app/kodata; \
+    cp queue-proxy /app/;
+
+FROM alpine
+COPY --from=build-env /app /app
+ENV KO_DATA_PATH=/app/kodata
+CMD ["/app/queue-proxy"]

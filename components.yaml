@@ -1,0 +1,31 @@
+operator: knative.dev/operator/cmd/operator
+
+serving:
+  activator: knative.dev/serving/cmd/activator
+  autoscaler: knative.dev/serving/cmd/autoscaler
+  controller: knative.dev/serving/cmd/controller
+  webhook: knative.dev/serving/cmd/webhook
+  autoscaler-hpa: knative.dev/serving/cmd/autoscaler-hpa
+  networking-istio: knative.dev/net-istio/cmd/controller
+  queue-proxy: knative.dev/serving/cmd/queue
+  istio-webhook: knative.dev/net-istio/cmd/webhook
+  storage-version-migration: knative.dev/serving/vendor/knative.dev/pkg/apiextensions/storageversion/cmd/migrate
+
+eventing:
+  apiserver-receive-adapter: knative.dev/eventing/cmd/apiserver_receive_adapter
+  broker-filter: knative.dev/eventing/cmd/broker/filter
+  broker-ingress: knative.dev/eventing/cmd/broker/ingress
+  channel-broker: knative.dev/eventing/cmd/channel_broker
+  controller: knative.dev/eventing/cmd/controller
+  in-memory-channel-controller: knative.dev/eventing/cmd/in_memory/channel_controller
+  in-memory-channel-dispatcher: knative.dev/eventing/cmd/in_memory/channel_dispatcher
+  mt-broker-filter: knative.dev/eventing/cmd/mtbroker/filter
+  mt-broker-ingress: knative.dev/eventing/cmd/mtbroker/ingress
+  mt-channel-broker: knative.dev/eventing/cmd/mtchannel_broker
+  mt-ping: knative.dev/eventing/cmd/mtping
+  ping: knative.dev/eventing/cmd/ping
+  pong: knative.dev/eventing/cmd/pong
+  sendevent: knative.dev/eventing/cmd/sendevent
+  upgrade-015: knative.dev/eventing/cmd/upgrade/v0.15.0
+  webhook: knative.dev/eventing/cmd/webhook
+  storage-version-migration: knative.dev/eventing/vendor/knative.dev/pkg/apiextensions/storageversion/cmd/migrate

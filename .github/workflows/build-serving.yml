@@ -1,0 +1,170 @@
+name: build-serving
+on:
+  push:
+    paths:
+      - .github/workflows/build-serving.yml
+      - serving/**
+
+jobs:
+
+  build-activator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./serving/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-serving-activator:${VERSION} \
+                -f serving/Dockerfile.activator .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-autoscaler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./serving/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-serving-autoscaler:${VERSION} \
+                -f serving/Dockerfile.autoscaler .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-autoscaler-hpa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./serving/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-serving-autoscaler-hpa:${VERSION} \
+                -f serving/Dockerfile.autoscaler-hpa .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-controller:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./serving/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-serving-controller:${VERSION} \
+                -f serving/Dockerfile.controller .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-istio-webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./serving/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-serving-istio-webhook:${VERSION} \
+                -f serving/Dockerfile.istio-webhook .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-networking-istio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./serving/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-serving-networking-istio:${VERSION} \
+                -f serving/Dockerfile.networking-istio .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-queue-proxy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./serving/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-serving-queue-proxy:${VERSION} \
+                -f serving/Dockerfile.queue-proxy .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-storage-version-migration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./serving/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-serving-storage-version-migration:${VERSION} \
+                -f serving/Dockerfile.storage-version-migration .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./serving/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-serving-webhook:${VERSION} \
+                -f serving/Dockerfile.webhook .
+      - run: rm -rf ${HOME}/.docker/config

@@ -1,0 +1,15 @@
+apiVersion: operator.knative.dev/v1alpha1
+kind: KnativeServing
+metadata:
+  name: knative-serving
+  namespace: knative-serving
+spec:
+  registry:
+    default: docker.io/querycap/knative-serving-${NAME}:v0.15.1
+    override:
+      migrate: docker.io/querycap/knative-serving-storage-version-migration:v0.15.1
+  config:
+    domain:
+      hw-dev2.rktl.xyz: ""
+    autoscaler:
+      stable-window: "60s"

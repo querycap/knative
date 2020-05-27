@@ -1,0 +1,314 @@
+name: build-eventing
+on:
+  push:
+    paths:
+      - .github/workflows/build-eventing.yml
+      - eventing/**
+
+jobs:
+
+  build-apiserver-receive-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-apiserver-receive-adapter:${VERSION} \
+                -f eventing/Dockerfile.apiserver-receive-adapter .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-broker-filter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-broker-filter:${VERSION} \
+                -f eventing/Dockerfile.broker-filter .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-broker-ingress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-broker-ingress:${VERSION} \
+                -f eventing/Dockerfile.broker-ingress .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-channel-broker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-channel-broker:${VERSION} \
+                -f eventing/Dockerfile.channel-broker .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-controller:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-controller:${VERSION} \
+                -f eventing/Dockerfile.controller .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-in-memory-channel-controller:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-in-memory-channel-controller:${VERSION} \
+                -f eventing/Dockerfile.in-memory-channel-controller .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-in-memory-channel-dispatcher:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-in-memory-channel-dispatcher:${VERSION} \
+                -f eventing/Dockerfile.in-memory-channel-dispatcher .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-mt-broker-filter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-mt-broker-filter:${VERSION} \
+                -f eventing/Dockerfile.mt-broker-filter .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-mt-broker-ingress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-mt-broker-ingress:${VERSION} \
+                -f eventing/Dockerfile.mt-broker-ingress .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-mt-channel-broker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-mt-channel-broker:${VERSION} \
+                -f eventing/Dockerfile.mt-channel-broker .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-mt-ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-mt-ping:${VERSION} \
+                -f eventing/Dockerfile.mt-ping .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-ping:${VERSION} \
+                -f eventing/Dockerfile.ping .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-pong:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-pong:${VERSION} \
+                -f eventing/Dockerfile.pong .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-sendevent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-sendevent:${VERSION} \
+                -f eventing/Dockerfile.sendevent .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-storage-version-migration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-storage-version-migration:${VERSION} \
+                -f eventing/Dockerfile.storage-version-migration .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-upgrade-015:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-upgrade-015:${VERSION} \
+                -f eventing/Dockerfile.upgrade-015 .
+      - run: rm -rf ${HOME}/.docker/config
+
+  build-webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: v0.4.1
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: |
+          export VERSION=$(cat ./eventing/.version);
+          docker buildx build \
+                --push \
+                --build-arg=VERSION=${VERSION} \
+                --platform=linux/amd64,linux/arm64 \
+                -t querycap/knative-eventing-webhook:${VERSION} \
+                -f eventing/Dockerfile.webhook .
+      - run: rm -rf ${HOME}/.docker/config

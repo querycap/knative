@@ -1,0 +1,27 @@
+
+FROM golang:1.14-alpine as build-env
+
+RUN apk add --no-cache git
+
+ARG GOPROXY=https://proxy.golang.org,direct
+ARG VERSION=v0.0.1
+
+WORKDIR /go/src
+RUN git clone https://github.com/knative/eventing.git knative.dev/eventing; 
+
+WORKDIR /go/src/knative.dev/eventing/cmd/in_memory/channel_controller
+
+RUN set -eux; \
+    \
+	git checkout ${VERSION}; \
+    go build -o in-memory-channel-controller; \
+    \
+    mkdir -p /app; \
+    mkdir -p ./kodata; \
+    cp -R ./kodata /app/kodata; \
+    cp in-memory-channel-controller /app/;
+
+FROM alpine
+COPY --from=build-env /app /app
+ENV KO_DATA_PATH=/app/kodata
+CMD ["/app/in-memory-channel-controller"]

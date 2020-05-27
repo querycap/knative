@@ -1,0 +1,28 @@
+
+FROM golang:1.14-alpine as build-env
+
+RUN apk add --no-cache git
+
+ARG GOPROXY=https://proxy.golang.org,direct
+ARG VERSION=v0.0.1
+
+WORKDIR /go/src
+RUN git clone https://github.com/knative/operator.git knative.dev/operator; 
+
+WORKDIR /go/src/knative.dev/operator/cmd/operator
+
+RUN set -eux; \
+    \
+	git checkout ${VERSION}; \
+    go build -o operator; \
+    \
+    mkdir -p /app; \
+    mkdir -p ./kodata; \
+    cp -R ./kodata /app/kodata; \
+    cp operator /app/;
+
+FROM alpine
+COPY --from=build-env /app /app
+COPY ./operator/kodata /app/kodata
+ENV KO_DATA_PATH=/app/kodata
+CMD ["/app/operator"]
