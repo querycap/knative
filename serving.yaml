@@ -14,6 +14,6 @@ spec:
     deployment:
       queueSidecarImage: docker.io/querycap/knative-serving-queue-proxy:v0.15.1
     domain:
-      hw-dev2.rktl.xyz: ""
+      fn.hw-dev2.rktl.xyz: ""
     autoscaler:
       stable-window: "60s"

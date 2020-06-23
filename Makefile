@@ -7,3 +7,6 @@ apply-operator:
 apply-serving:
 	kubectl apply -f ./serving.yaml
 
+remove-serving:
+	kubectl delete -f ./serving.yaml
+

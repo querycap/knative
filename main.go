@@ -47,9 +47,10 @@ func write(group string, components map[string]string) {
 	ioutil.WriteFile(fmt.Sprintf("./.github/workflows/build-%s.yml", group), workflow.Bytes(), os.ModePerm)
 }
 
-func writeDockerfile(group string, componentName string, pkg string) {
-	repo := "https://github.com/knative/" + strings.Split(pkg, "/")[1] + ".git"
-	pkgRootName := strings.Join(strings.Split(pkg, "/")[0:2], "/")
+func writeDockerfile(group string, componentName string, pkgCmd string) {
+	repo := "https://github.com/knative/" + strings.Split(pkgCmd, "/")[1] + ".git"
+	pkgRootName := strings.Join(strings.Split(pkgCmd, "/")[0:2], "/")
+	cmdName := last(strings.Split(pkgCmd, "/"))
 
 	hasKoLocalData := false
 
@@ -59,9 +60,9 @@ func writeDockerfile(group string, componentName string, pkg string) {
 	}
 
 	buf := bytes.NewBufferString(`
-FROM golang:1.14-alpine as build-env
+FROM golang:1.14 as build-env
 
-RUN apk add --no-cache git
+RUN apt-get update && apt-get install git
 
 ARG GOPROXY=https://proxy.golang.org,direct
 ARG VERSION=v0.0.1
@@ -69,19 +70,20 @@ ARG VERSION=v0.0.1
 WORKDIR /go/src
 RUN git clone ` + repo + ` ` + pkgRootName + `; 
 
-WORKDIR /go/src/` + pkg + `
+WORKDIR /go/src/` + pkgCmd + `
 
 RUN set -eux; \
     \
 	git checkout ${VERSION}; \
-    go build -o ` + componentName + `; \
+    CGO_ENABLED=0 go build -o ` + cmdName + `; \
     \
     mkdir -p ` + appDir + `; \
     mkdir -p ./kodata; \
-    cp -R ./kodata ` + kodataRoot + `; \
-    cp ` + componentName + ` ` + appDir + `/;
+    cp -RL ./kodata ` + kodataRoot + `; \
+    cp ` + cmdName + ` ` + appDir + `/;
 
-FROM alpine
+FROM discolix/static:nonroot
+
 COPY --from=build-env ` + appDir + ` ` + appDir + `
 COPY --from=build-env ` + kodataRoot + ` ` + kodataRoot + ` 
 `)
@@ -93,7 +95,7 @@ COPY --from=build-env ` + kodataRoot + ` ` + kodataRoot + `
 	}
 
 	_, _ = io.WriteString(buf, `ENV PATH="`+appDir+`:${PATH}" KO_DATA_PATH=`+kodataRoot+`
-ENTRYPOINT ["`+path.Join(appDir, componentName)+`"]
+ENTRYPOINT ["`+path.Join(appDir, cmdName)+`"]
 `)
 
 	ioutil.WriteFile(fmt.Sprintf("./%s/Dockerfile.%s", group, componentName), buf.Bytes(), os.ModePerm)
@@ -153,4 +155,8 @@ func loadComponents() (*Components, error) {
 
 	c := &Components{}
 	return c, yaml.NewDecoder(file).Decode(c)
+}
+
+func last(arr []string) string {
+	return arr[len(arr)-1]
 }

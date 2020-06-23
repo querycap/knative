@@ -1,13 +1,10 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: helloworld-go
+  name: helloworld
   namespace: default
 spec:
   template:
     spec:
       containers:
-        - image: nginx
-          env:
-          - name: NGINX_PORT
-            value: "8080"
+        - image: querycap/webappserve

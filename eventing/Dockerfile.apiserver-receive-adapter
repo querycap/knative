@@ -1,7 +1,7 @@
 
-FROM golang:1.14-alpine as build-env
+FROM golang:1.14 as build-env
 
-RUN apk add --no-cache git
+RUN apt-get update && apt-get install git
 
 ARG GOPROXY=https://proxy.golang.org,direct
 ARG VERSION=v0.0.1
@@ -14,15 +14,16 @@ WORKDIR /go/src/knative.dev/eventing/cmd/apiserver_receive_adapter
 RUN set -eux; \
     \
 	git checkout ${VERSION}; \
-    go build -o apiserver-receive-adapter; \
+    CGO_ENABLED=0 go build -o apiserver_receive_adapter; \
     \
     mkdir -p /ko-app; \
     mkdir -p ./kodata; \
-    cp -R ./kodata /var/run/ko; \
-    cp apiserver-receive-adapter /ko-app/;
+    cp -RL ./kodata /var/run/ko; \
+    cp apiserver_receive_adapter /ko-app/;
 
-FROM alpine
+FROM discolix/static:nonroot
+
 COPY --from=build-env /ko-app /ko-app
 COPY --from=build-env /var/run/ko /var/run/ko 
 ENV PATH="/ko-app:${PATH}" KO_DATA_PATH=/var/run/ko
-ENTRYPOINT ["/ko-app/apiserver-receive-adapter"]
+ENTRYPOINT ["/ko-app/apiserver_receive_adapter"]
