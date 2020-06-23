@@ -26,6 +26,9 @@ func main() {
 	write("eventing", c.Eventing)
 }
 
+const appDir = "/ko-app"
+const kodataRoot = "/var/run/ko"
+
 func write(group string, components map[string]string) {
 	workflow := NewWorkflow(group)
 	componentNames := make([]string, 0)
@@ -73,23 +76,24 @@ RUN set -eux; \
 	git checkout ${VERSION}; \
     go build -o ` + componentName + `; \
     \
-    mkdir -p /app; \
+    mkdir -p ` + appDir + `; \
     mkdir -p ./kodata; \
-    cp -R ./kodata /app/kodata; \
-    cp ` + componentName + ` /app/;
+    cp -R ./kodata ` + kodataRoot + `; \
+    cp ` + componentName + ` ` + appDir + `/;
 
 FROM alpine
-COPY --from=build-env /app /app
+COPY --from=build-env ` + appDir + ` ` + appDir + `
+COPY --from=build-env ` + kodataRoot + ` ` + kodataRoot + ` 
 `)
 
 	if hasKoLocalData {
-		_, _ = io.WriteString(buf, `COPY ./`+path.Join(componentName, "kodata")+` /app/kodata
+		_, _ = io.WriteString(buf, `COPY ./`+path.Join(group, componentName, "kodata")+` `+kodataRoot+`
 `)
 
 	}
 
-	_, _ = io.WriteString(buf, `ENV KO_DATA_PATH=/app/kodata
-CMD ["/app/`+componentName+`"]
+	_, _ = io.WriteString(buf, `ENV PATH="`+appDir+`:${PATH}" KO_DATA_PATH=`+kodataRoot+`
+ENTRYPOINT ["`+path.Join(appDir, componentName)+`"]
 `)
 
 	ioutil.WriteFile(fmt.Sprintf("./%s/Dockerfile.%s", group, componentName), buf.Bytes(), os.ModePerm)

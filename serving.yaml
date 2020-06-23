@@ -7,8 +7,12 @@ spec:
   registry:
     default: docker.io/querycap/knative-serving-${NAME}:v0.15.1
     override:
+      autoscaler/autoscaler: docker.io/querycap/knative-serving-autoscaler:v0.15.1
+      istio-webhook/webhook: docker.io/querycap/knative-serving-istio-webhook:v0.15.1
       migrate: docker.io/querycap/knative-serving-storage-version-migration:v0.15.1
   config:
+    deployment:
+      queueSidecarImage: docker.io/querycap/knative-serving-queue-proxy:v0.15.1
     domain:
       hw-dev2.rktl.xyz: ""
     autoscaler:

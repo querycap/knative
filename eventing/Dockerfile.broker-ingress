@@ -16,12 +16,13 @@ RUN set -eux; \
 	git checkout ${VERSION}; \
     go build -o broker-ingress; \
     \
-    mkdir -p /app; \
+    mkdir -p /ko-app; \
     mkdir -p ./kodata; \
-    cp -R ./kodata /app/kodata; \
-    cp broker-ingress /app/;
+    cp -R ./kodata /var/run/ko; \
+    cp broker-ingress /ko-app/;
 
 FROM alpine
-COPY --from=build-env /app /app
-ENV KO_DATA_PATH=/app/kodata
-CMD ["/app/broker-ingress"]
+COPY --from=build-env /ko-app /ko-app
+COPY --from=build-env /var/run/ko /var/run/ko 
+ENV PATH="/ko-app:${PATH}" KO_DATA_PATH=/var/run/ko
+ENTRYPOINT ["/ko-app/broker-ingress"]
