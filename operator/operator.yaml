@@ -601,7 +601,7 @@ spec:
       serviceAccountName: knative-operator
       containers:
       - name: knative-operator
-        image: querycap/knative-operator:7480a52ef3d3aa0d43a301c23d2dd376b148f5e9 #@sha256:e94d8d1c739205b5d5929e5cd49f1e1d4007a76e1aae0a6988ce15f21341819e
+        image: querycap/knative-operator:v0.15.1 #@sha256:42fa8616bb689e5ceb4463f86140406c86e6869d7d6102b7b662624ab132f118
         imagePullPolicy: IfNotPresent
         env:
         - name: POD_NAME
